@@ -7,3 +7,23 @@ django_extensions==2.1.3
 uwsgi==2.0.17.1
 pylint==2.3.1
 
+##### REST #####
+djangorestframework==3.9.3
+django-filter==2.0.0
+djangorestframework-gis==0.15
+django-cors-headers==2.2.0
+# Generador de documentación swagger
+drf-yasg==1.14
+# Necesario para drf-yasg
+flex==6.14.1
+coreapi==2.3.3
+coreschema==0.0.4
+swagger-spec-validator==2.4.1
+
+# Sistema api rest de gestión de usuarios y soporte de JWT
+# djangorestframework-simplejwt==3.3
+# djoser==1.7.0
+
+# Necesario para auth con redes sociales en caso de implementarse
+# social-auth-app-django==3.1.0
+
