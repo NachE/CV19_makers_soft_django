@@ -1,0 +1,41 @@
+version: "3.4"
+
+services:
+  django_service:
+    depends_on:
+      - postgis_service
+    build:
+      context: .
+      dockerfile: ./django_service.Dockerfile
+    command: >
+      /bin/bash -c "
+          pip install -r requirements.txt
+          while ! nc -z postgis_service 5432;
+          do
+              sleep 5s;
+          done;
+          sleep 5s;
+          python3 manage.py runserver 0:80;"
+    volumes:
+      - ./src:/code
+    env_file:
+      - .env
+    ports:
+      - "8080:80"
+    stdin_open: true
+    tty: true
+
+  postgis_service:
+    image: "postgis/postgis:10-2.5"
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - ./docker_data/postgresql:/var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+#   adminer:
+#     image: adminer
+#     ports:
+#       - "8181:8080"

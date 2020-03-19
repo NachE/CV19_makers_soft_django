@@ -1,0 +1,11 @@
+/docker_data/*
+/.ropeproject/*
+*.pyc
+*.DS_Store
+*__pycache__*
+/src/__init__.py
+/src/static
+/src/media/uploads
+/src/.coverage
+/src/htmlcov
+
