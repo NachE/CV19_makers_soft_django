@@ -1,0 +1,1 @@
+# CV19_makers_soft_django
