@@ -14,9 +14,12 @@ class Region(BaseModel):
         verbose_name='Región',
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Production(BaseModel):
-    name = models.ForeignKey(
+    region = models.ForeignKey(
         'Region',
         null=False,
         related_name='production_points',
@@ -44,3 +47,6 @@ class Production(BaseModel):
         default=False,
         verbose_name="Necesidad logística",
     )
+
+    def __str__(self):
+        return self.name
