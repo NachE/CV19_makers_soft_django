@@ -8,7 +8,7 @@ urlpatterns = [
         name='production_list_create',
     ),
     url(
-        r'^production/<int:id>/$',
+        r'^production/(?P<pk>\d+)/$',
         classviews.ProductionRUD.as_view(),
         name='production_retrieve_update_delete',
     ),
