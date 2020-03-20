@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -142,3 +143,4 @@ STATIC_URL = '/static/'
 
 # Permite desactivar CORS y aceptar conexiones desde cualquier sitio
 CORS_ORIGIN_ALLOW_ALL = True
+GRAPPELLI_ADMIN_TITLE = 'AIRE Admin'
