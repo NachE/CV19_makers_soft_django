@@ -1,21 +1,21 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
-from .models import Production
-from .serializers import ProductionSerializer
+from .models import Producer
+from .serializers import ProducerSerializer
 
 
-class ProductionLC(generics.ListCreateAPIView):
+class ProducerLC(generics.ListCreateAPIView):
     """
-    Listar y crear productions
+    Listar y crear Producers
     """
-    serializer_class = ProductionSerializer
+    serializer_class = ProducerSerializer
     # TODO: implementar permisos?
     permission_classes = (AllowAny, )
-    queryset = Production.objects.all()
+    queryset = Producer.objects.all()
 
 
-class ProductionRUD(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Production.objects.all()
-    serializer_class = ProductionSerializer
+class ProducerRUD(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Producer.objects.all()
+    serializer_class = ProducerSerializer
     # TODO: implementar permisos?
     permission_classes = (AllowAny, )

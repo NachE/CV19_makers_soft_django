@@ -20,6 +20,9 @@ coreapi==2.3.3
 coreschema==0.0.4
 swagger-spec-validator==2.4.1
 
+# Generar gráfico de modelos de DB
+pydotplus==2.0.2
+
 # Sistema api rest de gestión de usuarios y soporte de JWT
 # djangorestframework-simplejwt==3.3
 # djoser==1.7.0

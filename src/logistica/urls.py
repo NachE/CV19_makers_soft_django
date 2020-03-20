@@ -3,13 +3,13 @@ from . import classviews
 
 urlpatterns = [
     url(
-        r'^production/$',
-        classviews.ProductionLC.as_view(),
-        name='production_list_create',
+        r'^producer/$',
+        classviews.ProducerLC.as_view(),
+        name='producer_list_create',
     ),
     url(
-        r'^production/(?P<pk>\d+)/$',
-        classviews.ProductionRUD.as_view(),
-        name='production_retrieve_update_delete',
+        r'^producer/(?P<pk>\d+)/$',
+        classviews.ProducerRUD.as_view(),
+        name='producer_retrieve_update_delete',
     ),
 ]
