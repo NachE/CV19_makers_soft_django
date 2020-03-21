@@ -143,4 +143,4 @@ STATIC_URL = '/static/'
 
 # Permite desactivar CORS y aceptar conexiones desde cualquier sitio
 CORS_ORIGIN_ALLOW_ALL = True
-GRAPPELLI_ADMIN_TITLE = 'AIRE Admin'
+GRAPPELLI_ADMIN_TITLE = 'AIRE Logistica Admin'

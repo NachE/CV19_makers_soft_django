@@ -1,5 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+from django.conf import settings
 from django.contrib.gis.db import models
 
 
@@ -24,6 +26,9 @@ class Region(BaseModel):
         verbose_name='Región',
     )
 
+    class Meta:
+        verbose_name_plural = _('regions')
+
     def __str__(self):
         return self.name
 
@@ -35,6 +40,9 @@ class Resource(BaseModel):
         blank=False,
         verbose_name='Name',
     )
+
+    class Meta:
+        verbose_name_plural = _('resources')
 
     def __str__(self):
         return self.name
@@ -64,8 +72,48 @@ class Inventory(BaseModel):
         verbose_name='Cantidad',
     )
 
+    class Meta:
+        verbose_name_plural = _('inventories')
+
     def __str__(self):
         return f"{self.quantity} {self.resource.name}"
+
+
+class Request(BaseModel):
+    consumer = models.ForeignKey(
+        'Consumer',
+        null=True,
+        related_name='requests',
+        blank=True,
+        on_delete=models.PROTECT,
+    )
+    resource = models.ForeignKey(
+        'Resource',
+        null=False,
+        related_name='requests',
+        blank=False,
+        on_delete=models.PROTECT,
+        verbose_name='Recurso',
+    )
+    quantity = models.IntegerField(
+        null=False,
+        blank=False,
+        default=0,
+        verbose_name='Cantidad',
+    )
+    done = models.BooleanField(
+        default=False,
+        verbose_name="Necesidad satisfecha",
+    )
+
+    class Meta:
+        verbose_name_plural = _('requests')
+
+    def __str__(self):
+        done_str = ''
+        if self.done:
+            done_str = ' | Satisfecha | '
+        return f"{self.quantity} {done_str} {self.resource.name}"
 
 
 class Producer(BaseModel):
@@ -82,6 +130,17 @@ class Producer(BaseModel):
         blank=False,
         verbose_name='Nombre',
     )
+    telegram_nick = models.CharField(
+        max_length=250,
+        null=True,
+        blank=True,
+        verbose_name='Telegram nick',
+    )
+    telegram_id = models.BigIntegerField(
+        null=True,
+        blank=True,
+        verbose_name='Telegram id',
+    )
     point = models.PointField(
         verbose_name='Geospatial point',
         spatial_index=True,
@@ -97,6 +156,18 @@ class Producer(BaseModel):
         default=False,
         verbose_name="Necesidad logística",
     )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        related_name='producers',
+        blank=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        verbose_name="Usuario real asociado",
+    )
+
+    class Meta:
+        verbose_name_plural = _('producers')
 
     def __str__(self):
         return self.name
@@ -136,6 +207,9 @@ class Consumer(BaseModel):
         srid=4326,
     )
 
+    class Meta:
+        verbose_name_plural = _('consumers')
+
     def __str__(self):
         return self.name
 
@@ -174,6 +248,43 @@ class Intermediary(BaseModel):
         srid=4326,
     )
 
+    class Meta:
+        verbose_name_plural = _('intermediaries')
+
+    def __str__(self):
+        return self.name
+
+
+class Carrier(BaseModel):
+    region = models.ForeignKey(
+        'Region',
+        null=False,
+        related_name='carrier_points',
+        blank=False,
+        on_delete=models.PROTECT,
+    )
+    name = models.CharField(
+        max_length=250,
+        null=False,
+        blank=False,
+        verbose_name='Nombre',
+    )
+    address = models.CharField(
+        max_length=250,
+        null=False,
+        blank=False,
+        verbose_name='Dirección',
+    )
+    phone = models.CharField(
+        max_length=250,
+        null=False,
+        blank=False,
+        verbose_name='Teléfono',
+    )
+
+    class Meta:
+        verbose_name_plural = _('carriers')
+
     def __str__(self):
         return self.name
 
@@ -202,6 +313,13 @@ class Tracking(BaseModel):
         blank=True,
         default=None,
         verbose_name='Programado',
+    )
+    record_date = models.DateTimeField(
+        db_index=True,
+        null=True,
+        blank=True,
+        default=timezone.now,
+        verbose_name='Fecha de evento',
     )
     consumer = models.ForeignKey(
         'Consumer',
@@ -232,6 +350,9 @@ class Tracking(BaseModel):
         on_delete=models.CASCADE,
     )
 
+    class Meta:
+        verbose_name_plural = _('tracking')
+
     def clean(self):
         # Allow set only one of consumer, producer or intermediary
         if [self.consumer, self.producer,
@@ -244,7 +365,12 @@ class Tracking(BaseModel):
         places = [self.consumer, self.producer, self.intermediary]
         result = [place for place in places if place is not None]
         try:
-            return f"{self.last_updated_date.strftime('%Y-%m-%d %H:%M')} {result[0].name} -> {dict(self.STATUS_CHOICES).get(self.status)}"
+            date_string = self.record_date.strftime('%Y-%m-%d %H:%M')
+        except AttributeError:
+            date_string = 'DATE?'
+
+        try:
+            return f"{date_string} {result[0].name} -> {dict(self.STATUS_CHOICES).get(self.status)}"
         except IndexError:
             return 'UNKNOWN'
 
@@ -289,12 +415,23 @@ class Shipping(BaseModel):
         on_delete=models.PROTECT,
         verbose_name='Recurso',
     )
+    carrier = models.ForeignKey(
+        'Carrier',
+        null=True,
+        related_name='shipping',
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name='Transportista',
+    )
     quantity = models.IntegerField(
         null=False,
         blank=False,
         default=0,
         verbose_name='Cantidad',
     )
+
+    class Meta:
+        verbose_name_plural = _('shippings')
 
     def __str__(self):
         return f"{self.resource.name} -> {self.consumer.name}"
