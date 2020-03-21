@@ -18,7 +18,7 @@ admin.site.register(Resource, admin.GeoModelAdmin)
 admin.site.register(Inventory, admin.GeoModelAdmin)
 
 
-class TrackingInline(admin.StackedInline):
+class TrackingInline(admin.TabularInline):
     model = Tracking
     fieldsets = (
         (None, {
@@ -115,7 +115,7 @@ class ShippingAdmin(admin.GeoModelAdmin):
     get_tracking.short_description = 'Tracking'
 
 
-class InventoryInline(admin.StackedInline):
+class InventoryInline(admin.TabularInline):
     model = Inventory
     fields = (
         'resource',
@@ -125,7 +125,7 @@ class InventoryInline(admin.StackedInline):
     extra = 0
 
 
-class RequestInline(admin.StackedInline):
+class RequestInline(admin.TabularInline):
     model = Request
     fields = (
         'consumer',

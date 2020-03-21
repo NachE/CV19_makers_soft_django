@@ -5,6 +5,8 @@
 ### Changed
 
 - TODO
+- Remove grapelli admin (use vanilla django admin)
+- admin StackedInline to TabularInline
 
 ## [0.3] - 2020-03-21
 
