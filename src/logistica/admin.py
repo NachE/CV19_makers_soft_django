@@ -11,6 +11,7 @@ from .models import (
     Tracking,
     Intermediary,
     Request,
+    Carrier,
 )
 
 admin.site.register(Region, admin.GeoModelAdmin)
@@ -150,6 +151,23 @@ class ConsumerRequestAttentionFilter(SimpleListFilter):
         return queryset
 
 
+class RequestAttentionFilter(SimpleListFilter):
+    title = 'request attention'
+    parameter_name = 'request_attention'
+    default_value = None
+
+    def lookups(self, request, model_admin):
+        return (
+            (True, 'Necesidad satisfecha'),
+            (False, 'Necesidad'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(done=self.value()).distinct()
+        return queryset
+
+
 @admin.register(Consumer)
 class ConsumerAdmin(admin.GeoModelAdmin):
     search_fields = (
@@ -213,6 +231,23 @@ class IntermediaryAdmin(admin.GeoModelAdmin):
     list_filter = (RegionFilter, )
 
 
+@admin.register(Carrier)
+class CarrierAdmin(admin.GeoModelAdmin):
+    search_fields = (
+        'id',
+        'name',
+        'address',
+        'phone',
+    )
+    list_display = (
+        'name',
+        'pk',
+        'region',
+        'address',
+        'phone',
+    )
+
+
 @admin.register(Request)
 class RequestAdmin(admin.GeoModelAdmin):
     search_fields = (
@@ -227,3 +262,4 @@ class RequestAdmin(admin.GeoModelAdmin):
         'quantity',
         'done',
     )
+    list_filter = (RequestAttentionFilter, )
